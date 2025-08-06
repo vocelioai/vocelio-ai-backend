@@ -1,0 +1,2 @@
+# Ultra-minimal requirements - just in case
+# These will be ignored if Nix packages work

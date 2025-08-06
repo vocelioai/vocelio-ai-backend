@@ -1,27 +1,27 @@
 # Railway Nixpacks Configuration for Vocelio AI Backend
-# Ultra-simple approach without pip module calls
+# Reliable pip install approach
 
 [phases.setup]
-nixpkgs = ['python311', 'python311Packages.pip', 'python311Packages.fastapi', 'python311Packages.uvicorn']
+nixpkgs = ['python311', 'python311Packages.pip']
 
 [phases.install]
 cmds = [
     'echo "=== Python version ==="',
     'python3.11 --version',
-    'echo "=== Testing pip ==="',
-    'which pip || echo "pip not in PATH"',
-    'echo "=== Testing Python packages ==="',
-    'python3.11 -c "import sys; print(sys.path)"'
+    'echo "=== Setting up pip ==="',
+    'python3.11 -m ensurepip --upgrade || echo "ensurepip failed, trying direct install"',
+    'echo "=== Installing FastAPI ==="',
+    'python3.11 -m pip install fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0 --user --no-deps --no-cache-dir'
 ]
 
 [phases.build]
 cmds = [
-    'echo "=== Testing FastAPI import ==="',
-    'python3.11 -c "import fastapi; print(f\"FastAPI available\")" || echo "Installing FastAPI manually"'
+    'echo "=== Verifying FastAPI installation ==="',
+    'python3.11 -c "import fastapi; print(f\"FastAPI {fastapi.__version__} installed\")"'
 ]
 
 [start]
-cmd = 'cd apps/api-gateway && python3.11 -m uvicorn src.main:app --host 0.0.0.0 --port $PORT'
+cmd = 'python3.11 launcher.py || (cd apps/api-gateway && python3.11 -m uvicorn src.main:app --host 0.0.0.0 --port $PORT)'
 
 [variables]
 PYTHONPATH = '/app'

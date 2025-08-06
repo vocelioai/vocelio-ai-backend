@@ -31,4 +31,4 @@ WORKDIR /app/apps/api-gateway
 
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
-CMD ["python3", "src/railway_health.py"]
+CMD ["python3", "src/railway_start.py"]

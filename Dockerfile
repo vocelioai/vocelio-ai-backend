@@ -1,5 +1,5 @@
 # Vocelio AI Backend Dockerfile
-# Simple Python FastAPI deployment
+# Simple Python FastAPI deployment - Direct uvicorn startup
 
 FROM python:3.11-slim
 

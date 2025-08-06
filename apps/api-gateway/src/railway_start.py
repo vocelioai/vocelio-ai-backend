@@ -5,6 +5,7 @@ Handles Railway's PORT environment variable properly
 """
 
 import os
+import sys
 import uvicorn
 
 if __name__ == "__main__":
@@ -15,10 +16,14 @@ if __name__ == "__main__":
     print(f"📊 Full API Gateway with 25+ microservices")
     print(f"🔗 Health check: /health")
     print(f"📚 Documentation: /docs")
+    print(f"📁 Working directory: {os.getcwd()}")
+    
+    # Import the app directly
+    from main import app
     
     # Run with uvicorn - Railway compatible
     uvicorn.run(
-        "src.main:app",
+        app,
         host="0.0.0.0",
         port=port,
         log_level="info",

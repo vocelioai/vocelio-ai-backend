@@ -31,4 +31,4 @@ EXPOSE 8000
 
 # Change to API Gateway directory and start with uvicorn
 WORKDIR /app/apps/api-gateway
-CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "uvicorn src.main_simple:app --host 0.0.0.0 --port ${PORT:-8000}"]

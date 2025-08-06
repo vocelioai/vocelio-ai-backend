@@ -31,5 +31,5 @@ WORKDIR /app/apps/api-gateway
 
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
-# Test with simple Python HTTP server
-CMD ["python", "simple_server.py"]
+# Test with simple Python HTTP server with debugging
+CMD sh -c "echo 'Container started!' && pwd && ls -la && echo 'Looking for simple_server.py:' && ls -la simple_server.py && echo 'Starting Python server...' && python simple_server.py"

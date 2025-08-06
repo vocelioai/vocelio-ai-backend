@@ -31,9 +31,8 @@ WORKDIR /app/apps/api-gateway
 
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
-# Copy startup script and make it executable
-COPY apps/api-gateway/start.sh /app/apps/api-gateway/start.sh
-RUN chmod +x /app/apps/api-gateway/start.sh
+# Copy startup script
+COPY apps/api-gateway/start.py /app/apps/api-gateway/start.py
 
-# Start the application using startup script
-CMD ["/app/apps/api-gateway/start.sh"]
+# Start the application using Python startup script
+CMD ["python", "start.py"]

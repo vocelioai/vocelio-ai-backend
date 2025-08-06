@@ -1,63 +1,54 @@
 #!/usr/bin/env python3.11
 """
 Simple Python launcher for Railway deployment
-Ensures FastAPI is available and starts the app
+Direct FastAPI startup without shell dependencies
 """
 
 import sys
 import os
-import subprocess
-
-def run_command(cmd):
-    """Run a command and return success status"""
-    print(f"Running: {cmd}")
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-    print(result.stdout)
-    if result.stderr:
-        print(result.stderr)
-    return result.returncode == 0
 
 def main():
     print("🚀 Starting Vocelio AI Backend...")
     
-    # Check if FastAPI is already available
+    # Verify FastAPI is available
     try:
         import fastapi
         import uvicorn
         import pydantic
-        print("✅ All dependencies already available")
+        print(f"✅ FastAPI {fastapi.__version__} available")
+        print(f"✅ Uvicorn available")
+        print(f"✅ Pydantic {pydantic.__version__} available")
     except ImportError as e:
-        print(f"⚠️ Missing dependencies: {e}")
-        print("📦 Installing missing packages...")
-        
-        # Try to install missing packages
-        if not run_command("python3.11 -m pip install --no-cache-dir fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0"):
-            print("❌ Failed to install packages with pip")
-            sys.exit(1)
-        
-        # Verify again
-        try:
-            import fastapi
-            import uvicorn
-            import pydantic
-            print("✅ Dependencies installed successfully")
-        except ImportError as e:
-            print(f"❌ Still missing dependencies after install: {e}")
-            sys.exit(1)
-    
-    # Change to app directory and start
-    print("📁 Changing to api-gateway directory...")
-    if not os.path.exists("apps/api-gateway"):
-        print("❌ apps/api-gateway directory not found")
+        print(f"❌ Missing dependencies: {e}")
         sys.exit(1)
     
-    os.chdir("apps/api-gateway")
-    port = os.getenv("PORT", "8000")
+    # Change to app directory
+    print("📁 Changing to api-gateway directory...")
+    api_gateway_path = os.path.join(os.getcwd(), "apps", "api-gateway")
     
+    if not os.path.exists(api_gateway_path):
+        print(f"❌ Directory not found: {api_gateway_path}")
+        print("Available directories:")
+        for item in os.listdir(os.getcwd()):
+            if os.path.isdir(item):
+                print(f"  - {item}")
+        sys.exit(1)
+    
+    os.chdir(api_gateway_path)
+    print(f"✅ Changed to {os.getcwd()}")
+    
+    # Get port from environment
+    port = int(os.getenv("PORT", "8000"))
     print(f"🎯 Starting FastAPI on port {port}...")
     
-    # Start uvicorn
-    run_command(f"python3.11 -m uvicorn src.main:app --host 0.0.0.0 --port {port}")
+    # Start uvicorn directly (no subprocess)
+    import uvicorn
+    uvicorn.run(
+        "src.main:app",
+        host="0.0.0.0",
+        port=port,
+        log_level="info"
+    )
 
 if __name__ == "__main__":
     main()

@@ -26,11 +26,8 @@ RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Change to API Gateway directory
-WORKDIR /app/apps/api-gateway
-
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
 
-# Use Railway-optimized startup script
-CMD ["python", "railway_start.py"]
+# Run Railway simple FastAPI app
+CMD ["python", "railway_simple.py"]

@@ -1,1 +1,1 @@
-web: python3.11 launcher.py
+web: python railway_simple.py

@@ -20,19 +20,30 @@ def run_command(cmd):
 def main():
     print("🚀 Starting Vocelio AI Backend...")
     
-    # Ensure FastAPI is installed
-    print("📦 Ensuring FastAPI is available...")
-    run_command("python3.11 -m pip install --user --no-deps fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0")
-    
-    # Verify imports work
+    # Check if FastAPI is already available
     try:
         import fastapi
         import uvicorn
         import pydantic
-        print("✅ All dependencies verified successfully")
+        print("✅ All dependencies already available")
     except ImportError as e:
-        print(f"❌ Import error: {e}")
-        sys.exit(1)
+        print(f"⚠️ Missing dependencies: {e}")
+        print("📦 Installing missing packages...")
+        
+        # Try to install missing packages
+        if not run_command("python3.11 -m pip install --no-cache-dir fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0"):
+            print("❌ Failed to install packages with pip")
+            sys.exit(1)
+        
+        # Verify again
+        try:
+            import fastapi
+            import uvicorn
+            import pydantic
+            print("✅ Dependencies installed successfully")
+        except ImportError as e:
+            print(f"❌ Still missing dependencies after install: {e}")
+            sys.exit(1)
     
     # Change to app directory and start
     print("📁 Changing to api-gateway directory...")

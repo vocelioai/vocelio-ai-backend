@@ -1,17 +1,19 @@
 # Railway Nixpacks Configuration for Vocelio AI Backend
-# Reliable pip install approach
+# Fix pip module availability
 
 [phases.setup]
-nixpkgs = ['python311', 'python311Packages.pip']
+nixpkgs = ['python311', 'python311Packages.pip', 'python311Packages.setuptools', 'gcc', 'libffi', 'openssl', 'postgresql']
 
 [phases.install]
 cmds = [
     'echo "=== Python version ==="',
     'python3.11 --version',
-    'echo "=== Setting up pip ==="',
-    'python3.11 -m ensurepip --upgrade || echo "ensurepip failed, trying direct install"',
+    'echo "=== Ensuring pip module is available ==="',
+    'python3.11 -m ensurepip --upgrade',
+    'echo "=== Verifying pip works ==="',
+    'python3.11 -m pip --version',
     'echo "=== Installing FastAPI ==="',
-    'python3.11 -m pip install fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0 --user --no-deps --no-cache-dir'
+    'python3.11 -m pip install fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0 --no-cache-dir'
 ]
 
 [phases.build]

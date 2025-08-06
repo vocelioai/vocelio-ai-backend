@@ -31,8 +31,5 @@ WORKDIR /app/apps/api-gateway
 
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
-# Copy startup script
-COPY apps/api-gateway/start.py /app/apps/api-gateway/start.py
-
-# Start the application using Python startup script
-CMD ["python", "start.py"]
+# Start the application with Railway's PORT handling
+CMD sh -c "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"

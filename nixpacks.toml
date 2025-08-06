@@ -1,25 +1,26 @@
-# Railway Deployment Nixpacks Configuration
-# Multi-service FastAPI deployment for Vocelio AI Platform
+# Railway Nixpacks Configuration for Vocelio AI Backend
+# Optimized Python FastAPI deployment
 
 [phases.setup]
-nixpkgs = ['python311', 'pip']
+nixpkgs = ['python311', 'pip', 'gcc']
 
 [phases.install]
 cmds = [
-    'pip install --upgrade pip',
-    'pip install -r requirements.txt'
+    'python -m pip install --upgrade pip setuptools wheel',
+    'pip install --no-cache-dir -r requirements.txt'
 ]
 
 [phases.build]
 cmds = [
-    'echo "Installing shared dependencies..."',
-    'python -c "import fastapi; print(f\"FastAPI version: {fastapi.__version__}\")"'
+    'echo "Build phase complete"',
+    'python -c "import fastapi; print(f\"FastAPI {fastapi.__version__} ready\")"'
 ]
 
 [start]
-cmd = 'python -m uvicorn apps.api-gateway.src.main:app --host 0.0.0.0 --port $PORT'
+cmd = 'cd apps/api-gateway && python -m uvicorn src.main:app --host 0.0.0.0 --port $PORT --workers 1'
 
 [variables]
 PYTHONPATH = '/app'
 PYTHON_VERSION = '3.11'
 PORT = '8000'
+PYTHONUNBUFFERED = '1'

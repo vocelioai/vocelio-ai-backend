@@ -1,0 +1,38 @@
+# Railway ignore file - exclude unnecessary files from deployment
+
+# Documentation
+*.md
+docs/
+*.txt
+LICENSE
+
+# Development files
+.git/
+.vscode/
+*.log
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment files (will be set via Railway dashboard)
+.env
+.env.local
+.env.production
+
+# Test files
+test_*.py
+tests/
+*_test.py
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Scripts (not needed in production)
+scripts/

@@ -32,5 +32,5 @@ WORKDIR /app/apps/api-gateway
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
 
-# Run FastAPI app with uvicorn using Railway's PORT
-CMD sh -c "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+# Run minimal FastAPI test with uvicorn using Railway's PORT
+CMD sh -c "uvicorn src.minimal_test:app --host 0.0.0.0 --port ${PORT:-8000}"

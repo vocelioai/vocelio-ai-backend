@@ -307,11 +307,22 @@ async def get_optional_user(request: Request) -> Optional[UserContext]:
         return None
 
 # Health check endpoints
+@app.get("/")
+async def root():
+    """Root endpoint - Railway health check"""
+    return {
+        "message": "Vocelio API Gateway is alive 🚀",
+        "status": "running",
+        "service": "api-gateway",
+        "version": "2.0.0"
+    }
+
 @app.get("/health")
 async def health_check():
     """Gateway health check"""
     return {
-        "status": "healthy",
+        "status": "ok",
+        "healthy": True,
         "timestamp": datetime.utcnow().isoformat(),
         "version": "2.0.0",
         "service": "api-gateway"

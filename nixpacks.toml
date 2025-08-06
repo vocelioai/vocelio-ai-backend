@@ -1,17 +1,22 @@
 # Railway Nixpacks Configuration for Vocelio AI Backend
-# Simplified Python FastAPI deployment
+# Explicit Python setup to ensure pip is available
 
 [phases.setup]
-nixpkgs = ['python311']
+nixpkgs = ['python311', 'python311Packages.pip']
+nixLibs = ['python311', 'python311Packages.pip']
 
 [phases.install]
-cmds = ['pip install -r requirements.txt']
+cmds = [
+    'python3.11 -m ensurepip --upgrade',
+    'python3.11 -m pip install --upgrade pip',
+    'python3.11 -m pip install -r requirements.txt'
+]
 
 [phases.build]
-cmds = ['echo "Build complete"']
+cmds = ['echo "Python FastAPI build complete"']
 
 [start]
-cmd = 'cd apps/api-gateway && python -m uvicorn src.main:app --host 0.0.0.0 --port $PORT'
+cmd = 'cd apps/api-gateway && python3.11 -m uvicorn src.main:app --host 0.0.0.0 --port $PORT'
 
 [variables]
 PYTHONPATH = '/app'

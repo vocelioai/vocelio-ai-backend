@@ -33,4 +33,4 @@ EXPOSE 8000
 WORKDIR /app/apps/api-gateway
 
 EXPOSE 8000
-CMD ["uvicorn", "src.main_simple:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python3", "src/simple_server.py"]

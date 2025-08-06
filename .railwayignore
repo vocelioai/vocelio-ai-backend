@@ -1,5 +1,9 @@
 # Railway ignore file - exclude unnecessary files from deployment
 
+# Force nixpacks usage by excluding Dockerfiles
+Dockerfile*
+**/Dockerfile*
+
 # Documentation
 *.md
 docs/

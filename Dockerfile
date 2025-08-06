@@ -26,9 +26,9 @@ RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Change to API Gateway directory
-WORKDIR /app/apps/api-gateway
+# Change to API Gateway src directory
+WORKDIR /app/apps/api-gateway/src
 
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
-CMD ["python3", "src/railway_start.py"]
+CMD ["sh", "-c", "python3 -m uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]

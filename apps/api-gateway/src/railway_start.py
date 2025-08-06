@@ -18,8 +18,12 @@ if __name__ == "__main__":
     print(f"📚 Documentation: /docs")
     print(f"📁 Working directory: {os.getcwd()}")
     
-    # Import the app directly
-    from main import app
+    # Add current directory to path and import main module
+    sys.path.insert(0, os.path.dirname(__file__))
+    
+    # Import the main module
+    import main
+    app = main.app
     
     # Run with uvicorn - Railway compatible
     uvicorn.run(

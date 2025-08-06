@@ -1,6 +1,6 @@
 #!/bin/bash
 # Railway startup script for Vocelio AI Backend
-# Ensures Python and pip are available
+# Fixed for Nix externally-managed Python environment
 
 echo "🚀 Starting Vocelio AI Backend deployment..."
 
@@ -19,15 +19,15 @@ else
     exit 1
 fi
 
-# Ensure pip is available
-echo "🔧 Ensuring pip is available..."
-$PYTHON_CMD -m ensurepip --upgrade 2>/dev/null || echo "pip already available"
+# Check if pip is available (should be with Nix python311Packages.pip)
+if ! $PYTHON_CMD -m pip --version &> /dev/null; then
+    echo "❌ pip not available with $PYTHON_CMD"
+    exit 1
+fi
 
-# Upgrade pip
-echo "⬆️ Upgrading pip..."
-$PYTHON_CMD -m pip install --upgrade pip
+echo "✅ pip is available"
 
-# Install requirements
+# Install requirements directly (no pip upgrade needed in Nix)
 echo "📦 Installing Python packages..."
 $PYTHON_CMD -m pip install -r requirements.txt
 

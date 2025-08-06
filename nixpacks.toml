@@ -1,16 +1,25 @@
 # Railway Nixpacks Configuration for Vocelio AI Backend
-# Fixed for Nix externally-managed Python environment
+# Minimal setup with debugging
 
 [phases.setup]
 nixpkgs = ['python311', 'python311Packages.pip']
 
 [phases.install]
 cmds = [
-    'python3.11 -m pip install -r requirements.txt'
+    'echo "=== Python version ==="',
+    'python3.11 --version',
+    'echo "=== pip version ==="', 
+    'python3.11 -m pip --version',
+    'echo "=== Installing requirements ==="',
+    'cat requirements.txt',
+    'python3.11 -m pip install -r requirements.txt --verbose'
 ]
 
 [phases.build]
-cmds = ['echo "Python FastAPI build complete"']
+cmds = [
+    'echo "=== Verifying FastAPI installation ==="',
+    'python3.11 -c "import fastapi; print(f\"FastAPI {fastapi.__version__} installed\")"'
+]
 
 [start]
 cmd = 'cd apps/api-gateway && python3.11 -m uvicorn src.main:app --host 0.0.0.0 --port $PORT'

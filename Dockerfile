@@ -31,4 +31,9 @@ WORKDIR /app/apps/api-gateway
 
 # Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
-CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Copy startup script and make it executable
+COPY apps/api-gateway/start.sh /app/apps/api-gateway/start.sh
+RUN chmod +x /app/apps/api-gateway/start.sh
+
+# Start the application using startup script
+CMD ["/app/apps/api-gateway/start.sh"]

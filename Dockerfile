@@ -26,11 +26,9 @@ RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Expose port
-EXPOSE 8000
-
-# Change to API Gateway directory and expose port
+# Change to API Gateway directory
 WORKDIR /app/apps/api-gateway
 
+# Expose port (Railway will use $PORT environment variable)
 EXPOSE 8000
 CMD ["python3", "src/simple_server.py"]

@@ -31,7 +31,9 @@ class HealthHandler(http.server.BaseHTTPRequestHandler):
         print(f"[HTTP] {format % args}")
 
 if __name__ == "__main__":
-    PORT = 8000
+    import os
+    # Railway provides PORT environment variable
+    PORT = int(os.environ.get("PORT", 8000))
     print(f"Starting simple HTTP server on port {PORT}")
     
     with socketserver.TCPServer(("0.0.0.0", PORT), HealthHandler) as httpd:

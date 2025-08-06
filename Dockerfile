@@ -26,19 +26,11 @@ RUN python3.11 -m pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Change to API Gateway directory (not src subdirectory)
+# Change to API Gateway directory
+WORKDIR /app/apps/api-gateway
 
-# Set working directory
-WORKDIR /app
+# Expose port (Railway will use $PORT environment variable)
+EXPOSE 8000
 
-# Copy all files
-COPY . .
-
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Expose the port
-EXPOSE 8080
-
-# Run FastAPI app with uvicorn
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Run FastAPI app with uvicorn using Railway's PORT
+CMD sh -c "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"

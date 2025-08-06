@@ -1,0 +1,78 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "python -m uvicorn main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[env]
+# Service Configuration
+SERVICE_NAME = "settings"
+SERVICE_VERSION = "1.0.0"
+ENVIRONMENT = "production"
+DEBUG = "false"
+
+# API Configuration
+API_V1_PREFIX = "/api/v1"
+PORT = "8000"
+
+# Database Configuration (these will be set via Railway variables)
+# SUPABASE_URL = "your-supabase-url"
+# SUPABASE_ANON_KEY = "your-supabase-anon-key"
+
+# Authentication
+# SECRET_KEY = "your-secret-key"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = "30"
+
+# External Services
+# GATEWAY_URL = "your-gateway-url"
+# AI_BRAIN_URL = "your-ai-brain-url"
+# CALL_CENTER_URL = "your-call-center-url"
+
+# Security Settings
+# ENCRYPTION_KEY = "your-encryption-key"
+
+# Rate Limiting
+RATE_LIMIT_ENABLED = "true"
+RATE_LIMIT_REQUESTS = "100"
+RATE_LIMIT_WINDOW = "60"
+
+# Logging
+LOG_LEVEL = "INFO"
+
+# Redis (for caching)
+# REDIS_URL = "your-redis-url"
+CACHE_TTL = "300"
+
+# File Storage
+MAX_FILE_SIZE = "10485760"  # 10MB
+UPLOAD_PATH = "uploads/settings"
+
+# SMTP Configuration (for email notifications)
+# SMTP_SERVER = "your-smtp-server"
+SMTP_PORT = "587"
+# SMTP_USERNAME = "your-smtp-username"
+# SMTP_PASSWORD = "your-smtp-password"
+
+# Compliance
+GDPR_ENABLED = "true"
+DATA_RETENTION_DAYS = "365"
+AUDIT_LOG_ENABLED = "true"
+
+# CORS
+CORS_ORIGINS = "https://vocelio.ai,https://vocelio.vercel.app"
+
+[volumes]
+# Volume for file uploads (if needed)
+# uploads = "/app/uploads"
+
+[healthcheck]
+path = "/health"
+interval = 30
+timeout = 10
+retries = 3

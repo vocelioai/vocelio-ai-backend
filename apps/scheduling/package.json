@@ -1,0 +1,37 @@
+{
+  "name": "scheduling-service",
+  "version": "1.0.0",
+  "description": "Comprehensive appointment booking, calendar management, and scheduling automation for Vocelio AI Call Center",
+  "main": "src/main.py",
+  "scripts": {
+    "start": "python src/main.py",
+    "dev": "uvicorn src.main:app --reload --host 0.0.0.0 --port 8017",
+    "test": "pytest tests/ -v",
+    "lint": "flake8 src/",
+    "format": "black src/"
+  },
+  "dependencies": {
+    "fastapi": "^0.104.1",
+    "uvicorn": "^0.24.0",
+    "pydantic": "^2.5.0",
+    "python-multipart": "^0.0.6"
+  },
+  "devDependencies": {
+    "pytest": "^7.4.3",
+    "pytest-asyncio": "^0.21.1",
+    "black": "^23.11.0",
+    "flake8": "^6.1.0"
+  },
+  "keywords": [
+    "scheduling",
+    "appointment-booking",
+    "calendar-management",
+    "availability",
+    "reminders",
+    "booking-pages",
+    "calendar-integration",
+    "automation"
+  ],
+  "author": "Vocelio Team",
+  "license": "MIT"
+}

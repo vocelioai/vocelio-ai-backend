@@ -1,0 +1,18 @@
+# Railway Deployment Nixpacks Configuration
+# This file helps Railway understand how to build and deploy your Python FastAPI app
+
+[phases.setup]
+nixpkgs = ['python311', 'pip']
+
+[phases.install]
+cmds = ['pip install -r apps/api-gateway/requirements.txt']
+
+[phases.build]
+cmds = ['echo "Python FastAPI build complete"']
+
+[start]
+cmd = 'cd apps/api-gateway && python -m uvicorn src.main:app --host 0.0.0.0 --port $PORT'
+
+[variables]
+PYTHONPATH = '/app/apps/api-gateway'
+PYTHON_VERSION = '3.11'

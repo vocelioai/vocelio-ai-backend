@@ -1,0 +1,238 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  api-gateway:
+    build: ./apps/api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - CORS_ORIGINS=*
+    depends_on:
+      - overview
+      - agents
+      - smart-campaigns
+    networks:
+      - vocelio-network
+
+  # Core Services
+  overview:
+    build: ./apps/overview
+    ports:
+      - "8001:8001"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=overview
+    networks:
+      - vocelio-network
+
+  agents:
+    build: ./apps/agents
+    ports:
+      - "8002:8002"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=agents
+    networks:
+      - vocelio-network
+
+  smart-campaigns:
+    build: ./apps/smart-campaigns
+    ports:
+      - "8003:8003"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=smart-campaigns
+    networks:
+      - vocelio-network
+
+  call-center:
+    build: ./apps/call-center
+    ports:
+      - "8004:8004"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=call-center
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+    networks:
+      - vocelio-network
+
+  phone-numbers:
+    build: ./apps/phone-numbers
+    ports:
+      - "8005:8005"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=phone-numbers
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+    networks:
+      - vocelio-network
+
+  voice-marketplace:
+    build: ./apps/voice-marketplace
+    ports:
+      - "8006:8006"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=voice-marketplace
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+    networks:
+      - vocelio-network
+
+  voice-lab:
+    build: ./apps/voice-lab
+    ports:
+      - "8007:8007"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=voice-lab
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - RAMBLE_API_KEY=${RAMBLE_API_KEY}
+    networks:
+      - vocelio-network
+
+  flow-builder:
+    build: ./apps/flow-builder
+    ports:
+      - "8008:8008"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=flow-builder
+    networks:
+      - vocelio-network
+
+  analytics-pro:
+    build: ./apps/analytics-pro
+    ports:
+      - "8009:8009"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=analytics-pro
+    networks:
+      - vocelio-network
+
+  ai-brain:
+    build: ./apps/ai-brain
+    ports:
+      - "8010:8010"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=ai-brain
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - vocelio-network
+
+  integrations:
+    build: ./apps/integrations
+    ports:
+      - "8011:8011"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=integrations
+    networks:
+      - vocelio-network
+
+  agent-store:
+    build: ./apps/agent-store
+    ports:
+      - "8012:8012"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=agent-store
+    networks:
+      - vocelio-network
+
+  billing-pro:
+    build: ./apps/billing-pro
+    ports:
+      - "8013:8013"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=billing-pro
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+    networks:
+      - vocelio-network
+
+  team-hub:
+    build: ./apps/team-hub
+    ports:
+      - "8014:8014"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=team-hub
+    networks:
+      - vocelio-network
+
+  compliance:
+    build: ./apps/compliance
+    ports:
+      - "8015:8015"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=compliance
+    networks:
+      - vocelio-network
+
+  white-label:
+    build: ./apps/white-label
+    ports:
+      - "8016:8016"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=white-label
+    networks:
+      - vocelio-network
+
+  developer-api:
+    build: ./apps/developer-api
+    ports:
+      - "8017:8017"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=developer-api
+    networks:
+      - vocelio-network
+
+  settings:
+    build: ./apps/settings
+    ports:
+      - "8018:8018"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=settings
+    networks:
+      - vocelio-network
+
+  # Infrastructure Services
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - vocelio-network
+
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=vocelio
+      - POSTGRES_USER=vocelio_user
+      - POSTGRES_PASSWORD=vocelio_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./shared/database/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - vocelio-network
+
+networks:
+  vocelio-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

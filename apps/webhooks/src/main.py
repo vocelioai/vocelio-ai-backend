@@ -3,6 +3,12 @@ Webhooks Service - Vocelio AI Call Center
 Comprehensive webhook management and event delivery system
 """
 
+# Add parent directories to Python path for Docker compatibility
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -1148,4 +1154,4 @@ async def get_webhook_trends(days: int = 7):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8019)
+    uvicorn.run(app, host="0.0.0.0", port=8021)

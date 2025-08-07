@@ -1,23 +1,30 @@
-# Railway Deployment Configuration Generator
-# This script creates optimized Dockerfiles for each service
+#!/bin/bash
 
-# Service configurations with ports and dependencies
+# 🚀 Railway Deployment Automation Script
+# Deploys all 25 Vocelio AI Call Center services to Railway
+
+echo "🚀 Deploying World-Class AI Call Center to Railway"
+echo "=================================================="
+echo "Target: 25 microservices across 3 deployment phases"
+echo ""
+
+# Current 25 services with correct ports
 SERVICES=(
-    "api-gateway:8000:main"
-    "agents:8001:main" 
-    "ai-brain:8002:main"
-    "analytics-pro:8003:main"
-    "billing-pro:8004:main"
-    "call-center:8005:main"
-    "compliance:8006:main"
-    "flow-builder:8007:main"
-    "developer-api:8008:main"
-    "knowledge-base:8009:main"
-    "integrations:8010:main"
-    "lead-management:8011:main"
-    "notifications:8012:main"
-    "scheduling:8013:main"
-    "phone-numbers:8014:main"
+    "1-api-gateway:8001:API Gateway - Main entry point and routing"
+    "2-agents:8002:AI Agents - Intelligent call handling"
+    "3-ai-brain:8003:AI Brain - Core AI processing engine"
+    "4-call-center:8004:Call Center - Voice communication hub"
+    "5-integrations:8005:Integrations - External system connections"
+    "6-analytics:8006:Analytics - Call performance metrics"
+    "7-appointments:8007:Appointments - Scheduling management"
+    "8-developer-api:8008:Developer API - Third-party integration"
+    "9-notifications:8009:Notifications - Real-time alerts"
+    "10-pricing:8010:Pricing - Dynamic pricing engine"
+    "11-queue-management:8011:Queue Management - Call queue optimization"
+    "12-reports:8012:Reports - Business intelligence"
+    "13-user-management:8013:User Management - Account administration"
+    "14-workflows:8014:Workflows - Process automation"
+    "15-scripts:8015:Scripts - Call script management"
     "scripts:8015:main"
     "smart-campaigns:8016:main"
     "settings:8017:main"

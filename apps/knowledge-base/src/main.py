@@ -3,6 +3,12 @@ Knowledge Base Service - Vocelio AI Call Center
 Intelligent knowledge management with document processing, search, and AI-powered insights
 """
 
+# Add parent directories to Python path for Docker compatibility
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File, Form, Query
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -1059,4 +1065,4 @@ async def create_document_from_template(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8013)
+    uvicorn.run(app, host="0.0.0.0", port=8011)

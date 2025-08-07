@@ -3,6 +3,10 @@ Analytics Pro Service - Vocelio AI Call Center
 Advanced reporting, business intelligence, and data insights
 """
 
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager

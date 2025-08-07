@@ -1,11 +1,11 @@
-version: '3.8'
-
 services:
   # API Gateway
   api-gateway:
-    build: ./apps/api-gateway
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
     ports:
-      - "8000:8000"
+      - "8000:8080"
     environment:
       - ENVIRONMENT=development
       - DEBUG=true
@@ -13,33 +13,41 @@ services:
     depends_on:
       - overview
       - agents
-      - smart-campaigns
+      - flow-builder
+      - call-center
+      - ai-brain
     networks:
       - vocelio-network
 
   # Core Services
-  overview:
-    build: ./apps/overview
-    ports:
-      - "8001:8001"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=overview
-    networks:
-      - vocelio-network
-
   agents:
-    build: ./apps/agents
+    build:
+      context: .
+      dockerfile: apps/agents/Dockerfile
     ports:
-      - "8002:8002"
+      - "8001:8000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=agents
     networks:
       - vocelio-network
 
+  overview:
+    build:
+      context: .
+      dockerfile: apps/overview/Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=overview
+    networks:
+      - vocelio-network
+
   smart-campaigns:
-    build: ./apps/smart-campaigns
+    build:
+      context: .
+      dockerfile: apps/smart-campaigns/Dockerfile
     ports:
       - "8003:8003"
     environment:
@@ -49,7 +57,9 @@ services:
       - vocelio-network
 
   call-center:
-    build: ./apps/call-center
+    build:
+      context: .
+      dockerfile: apps/call-center/Dockerfile
     ports:
       - "8004:8004"
     environment:
@@ -60,96 +70,24 @@ services:
     networks:
       - vocelio-network
 
-  phone-numbers:
-    build: ./apps/phone-numbers
+  analytics-pro:
+    build:
+      context: .
+      dockerfile: apps/analytics-pro/Dockerfile
     ports:
       - "8005:8005"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=phone-numbers
-      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
-      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
-    networks:
-      - vocelio-network
-
-  voice-marketplace:
-    build: ./apps/voice-marketplace
-    ports:
-      - "8006:8006"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=voice-marketplace
-      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
-    networks:
-      - vocelio-network
-
-  voice-lab:
-    build: ./apps/voice-lab
-    ports:
-      - "8007:8007"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=voice-lab
-      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
-      - RAMBLE_API_KEY=${RAMBLE_API_KEY}
-    networks:
-      - vocelio-network
-
-  flow-builder:
-    build: ./apps/flow-builder
-    ports:
-      - "8008:8008"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=flow-builder
-    networks:
-      - vocelio-network
-
-  analytics-pro:
-    build: ./apps/analytics-pro
-    ports:
-      - "8009:8009"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=analytics-pro
     networks:
       - vocelio-network
 
-  ai-brain:
-    build: ./apps/ai-brain
-    ports:
-      - "8010:8010"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=ai-brain
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-    networks:
-      - vocelio-network
-
-  integrations:
-    build: ./apps/integrations
-    ports:
-      - "8011:8011"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=integrations
-    networks:
-      - vocelio-network
-
-  agent-store:
-    build: ./apps/agent-store
-    ports:
-      - "8012:8012"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=agent-store
-    networks:
-      - vocelio-network
-
   billing-pro:
-    build: ./apps/billing-pro
+    build:
+      context: .
+      dockerfile: apps/billing-pro/Dockerfile
     ports:
-      - "8013:8013"
+      - "8006:8006"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=billing-pro
@@ -158,53 +96,225 @@ services:
     networks:
       - vocelio-network
 
-  team-hub:
-    build: ./apps/team-hub
-    ports:
-      - "8014:8014"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=team-hub
-    networks:
-      - vocelio-network
-
   compliance:
-    build: ./apps/compliance
+    build:
+      context: .
+      dockerfile: apps/compliance/Dockerfile
     ports:
-      - "8015:8015"
+      - "8007:8007"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=compliance
     networks:
       - vocelio-network
 
-  white-label:
-    build: ./apps/white-label
-    ports:
-      - "8016:8016"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=white-label
-    networks:
-      - vocelio-network
-
   developer-api:
-    build: ./apps/developer-api
+    build:
+      context: .
+      dockerfile: apps/developer-api/Dockerfile
     ports:
-      - "8017:8017"
+      - "8008:8008"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=developer-api
     networks:
       - vocelio-network
 
+  flow-builder:
+    build:
+      context: .
+      dockerfile: apps/flow-builder/Dockerfile
+    ports:
+      - "8009:8009"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=flow-builder
+    networks:
+      - vocelio-network
+
+  integrations:
+    build:
+      context: .
+      dockerfile: apps/integrations/Dockerfile
+    ports:
+      - "8010:8010"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=integrations
+    networks:
+      - vocelio-network
+
+  knowledge-base:
+    build:
+      context: .
+      dockerfile: apps/knowledge-base/Dockerfile
+    ports:
+      - "8011:8011"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=knowledge-base
+    networks:
+      - vocelio-network
+
+  lead-management:
+    build:
+      context: .
+      dockerfile: apps/lead-management/Dockerfile
+    ports:
+      - "8012:8012"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=lead-management
+    networks:
+      - vocelio-network
+
+  scheduling:
+    build:
+      context: .
+      dockerfile: apps/scheduling/Dockerfile
+    ports:
+      - "8013:8013"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=scheduling
+    networks:
+      - vocelio-network
+
+  notifications:
+    build:
+      context: .
+      dockerfile: apps/notifications/Dockerfile
+    ports:
+      - "8014:8014"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=notifications
+    networks:
+      - vocelio-network
+
+  phone-numbers:
+    build:
+      context: .
+      dockerfile: apps/phone-numbers/Dockerfile
+    ports:
+      - "8015:8015"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=phone-numbers
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+    networks:
+      - vocelio-network
+
+  scripts:
+    build:
+      context: .
+      dockerfile: apps/scripts/Dockerfile
+    ports:
+      - "8016:8016"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=scripts
+    networks:
+      - vocelio-network
+
   settings:
-    build: ./apps/settings
+    build:
+      context: .
+      dockerfile: apps/settings/Dockerfile
+    ports:
+      - "8017:8017"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=settings
+    networks:
+      - vocelio-network
+
+  team-hub:
+    build:
+      context: .
+      dockerfile: apps/team-hub/Dockerfile
     ports:
       - "8018:8018"
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - SERVICE_NAME=settings
+      - SERVICE_NAME=team-hub
+    networks:
+      - vocelio-network
+
+  voice-lab:
+    build:
+      context: .
+      dockerfile: apps/voice-lab/Dockerfile
+    ports:
+      - "8019:8019"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=voice-lab
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - RAMBLE_API_KEY=${RAMBLE_API_KEY}
+    networks:
+      - vocelio-network
+
+  voice-marketplace:
+    build:
+      context: .
+      dockerfile: apps/voice-marketplace/Dockerfile
+    ports:
+      - "8020:8020"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=voice-marketplace
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+    networks:
+      - vocelio-network
+
+  webhooks:
+    build:
+      context: .
+      dockerfile: apps/webhooks/Dockerfile
+    ports:
+      - "8021:8021"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=webhooks
+    networks:
+      - vocelio-network
+
+  white-label:
+    build:
+      context: .
+      dockerfile: apps/white-label/Dockerfile
+    ports:
+      - "8022:8022"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=white-label
+    networks:
+      - vocelio-network
+
+  agent-store:
+    build:
+      context: .
+      dockerfile: apps/agent-store/Dockerfile
+    ports:
+      - "8023:8023"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=agent-store
+    networks:
+      - vocelio-network
+
+  ai-brain:
+    build:
+      context: .
+      dockerfile: apps/ai-brain/Dockerfile
+    ports:
+      - "8024:8024"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SERVICE_NAME=ai-brain
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     networks:
       - vocelio-network
 

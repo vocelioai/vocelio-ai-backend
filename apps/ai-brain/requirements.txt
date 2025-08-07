@@ -72,7 +72,7 @@ python-dotenv==1.0.0
 dynaconf==3.2.4
 
 # API Documentation
-fastapi-swagger-ui-dark==1.0.9
+# fastapi-swagger-ui-dark==1.0.9  # Commented out - package not available
 
 # Production server
 gunicorn==21.2.0

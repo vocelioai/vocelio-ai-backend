@@ -336,3 +336,20 @@ grafana/
 secrets/
 *.secret
 *.private
+
+# Vocelio AI - Security & Sensitive Files
+# =====================================
+# Environment variable scripts with API keys
+batch_upload_env.py
+batch_upload_env_correct.py
+
+# Railway deployment files with potential secrets (keep generated ones private)
+railway.*.toml
+
+# Generated deployment scripts (can be regenerated)
+deploy_microservices.sh
+generate_microservices_deployment.py
+fix_dockerfiles.py
+
+# Test files with potential API endpoints
+test_*.py

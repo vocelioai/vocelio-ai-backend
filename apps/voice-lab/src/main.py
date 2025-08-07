@@ -3,6 +3,10 @@ Voice Lab Service - Vocelio AI Call Center
 Advanced voice cloning, synthesis, custom voice training, and voice quality optimization
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -923,4 +927,4 @@ async def get_voice_lab_overview():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8011)
+    uvicorn.run(app, host="0.0.0.0", port=8015)

@@ -247,7 +247,7 @@ services:
       context: .
       dockerfile: apps/voice-lab/Dockerfile
     ports:
-      - "8019:8019"
+      - "8015:8015"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=voice-lab

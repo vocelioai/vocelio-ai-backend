@@ -3,6 +3,10 @@ Notifications Service - Vocelio AI Call Center
 Comprehensive multi-channel notification and communication management
 """
 
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager

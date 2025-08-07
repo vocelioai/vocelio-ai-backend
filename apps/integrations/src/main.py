@@ -3,6 +3,10 @@ Integrations Service - Vocelio AI Call Center
 CRM connections, API integrations, webhooks, and third-party platform connectivity
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager

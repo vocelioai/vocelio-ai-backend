@@ -3,6 +3,11 @@ Enhanced API Gateway - Vocelio AI Call Center
 Comprehensive gateway with circuit breakers, observability, RBAC, and resilience patterns
 """
 
+# Manual sys.path fix for Docker import issues
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+
 from fastapi import FastAPI, HTTPException, Depends, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
@@ -23,27 +28,30 @@ logger = logging.getLogger(__name__)
 
 # Service registry
 SERVICE_REGISTRY = {
-    "overview": {"url": "http://localhost:8001", "timeout": 30},
-    "agents": {"url": "http://localhost:8002", "timeout": 30},
-    "smart-campaigns": {"url": "http://localhost:8003", "timeout": 30},
-    "call-center": {"url": "http://localhost:8004", "timeout": 30},
-    "phone-numbers": {"url": "http://localhost:8005", "timeout": 30},
-    "voice-marketplace": {"url": "http://localhost:8006", "timeout": 30},
-    "analytics-pro": {"url": "http://localhost:8007", "timeout": 30},
-    "flow-builder": {"url": "http://localhost:8008", "timeout": 30},
-    "ai-brain": {"url": "http://localhost:8009", "timeout": 30},
-    "integrations": {"url": "http://localhost:8010", "timeout": 30},
-    "voice-lab": {"url": "http://localhost:8011", "timeout": 30},
-    "agent-store": {"url": "http://localhost:8012", "timeout": 30},
-    "billing-pro": {"url": "http://localhost:8013", "timeout": 30},
-    "team-hub": {"url": "http://localhost:8014", "timeout": 30},
-    "compliance": {"url": "http://localhost:8015", "timeout": 30},
-    "white-label": {"url": "http://localhost:8016", "timeout": 30},
-    "developer-api": {"url": "http://localhost:8017", "timeout": 30},
-    "settings": {"url": "http://localhost:8018", "timeout": 30},
-    "scripts": {"url": "http://localhost:8019", "timeout": 30},
-    "notifications": {"url": "http://localhost:8020", "timeout": 30},
-    "webhooks": {"url": "http://localhost:8021", "timeout": 30},
+    "overview": {"url": "http://overview:8002", "timeout": 30},
+    "agents": {"url": "http://agents:8000", "timeout": 30},
+    "smart-campaigns": {"url": "http://smart-campaigns:8003", "timeout": 30},
+    "call-center": {"url": "http://call-center:8004", "timeout": 30},
+    "analytics-pro": {"url": "http://analytics-pro:8005", "timeout": 30},
+    "billing-pro": {"url": "http://billing-pro:8006", "timeout": 30},
+    "compliance": {"url": "http://compliance:8007", "timeout": 30},
+    "developer-api": {"url": "http://developer-api:8008", "timeout": 30},
+    "flow-builder": {"url": "http://flow-builder:8009", "timeout": 30},
+    "integrations": {"url": "http://integrations:8010", "timeout": 30},
+    "knowledge-base": {"url": "http://knowledge-base:8011", "timeout": 30},
+    "lead-management": {"url": "http://lead-management:8012", "timeout": 30},
+    "scheduling": {"url": "http://scheduling:8013", "timeout": 30},
+    "notifications": {"url": "http://notifications:8014", "timeout": 30},
+    "phone-numbers": {"url": "http://phone-numbers:8015", "timeout": 30},
+    "scripts": {"url": "http://scripts:8016", "timeout": 30},
+    "settings": {"url": "http://settings:8017", "timeout": 30},
+    "team-hub": {"url": "http://team-hub:8018", "timeout": 30},
+    "voice-lab": {"url": "http://voice-lab:8019", "timeout": 30},
+    "voice-marketplace": {"url": "http://voice-marketplace:8020", "timeout": 30},
+    "webhooks": {"url": "http://webhooks:8021", "timeout": 30},
+    "white-label": {"url": "http://white-label:8022", "timeout": 30},
+    "agent-store": {"url": "http://agent-store:8023", "timeout": 30},
+    "ai-brain": {"url": "http://ai-brain:8024", "timeout": 30},
 }
 
 # Basic user context for fallback

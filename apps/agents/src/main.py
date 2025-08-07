@@ -12,11 +12,51 @@ from fastapi import FastAPI, HTTPException, Depends, status, Query
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
-# Add shared directory to path
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "shared"))
+# Add shared directory to path (root-level for Docker)
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared")))
 
-from database.client import DatabaseClient
-from models.base import Agent, AgentCreate, AgentUpdate, Voice, User
+from shared.database.client import DatabaseClient
+# Import only the basic models that exist
+# from models.base import Agent, Voice, User
+
+# Create simple Pydantic models for the agents service
+from pydantic import BaseModel
+from typing import List, Optional, Dict, Any
+from datetime import datetime
+
+class AgentCreate(BaseModel):
+    name: str
+    description: Optional[str] = ""
+    voice_id: Optional[str] = ""
+    language: Optional[str] = "en"
+    personality_traits: Optional[List[str]] = []
+
+class AgentUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    voice_id: Optional[str] = None
+    language: Optional[str] = None
+    personality_traits: Optional[List[str]] = None
+
+class Agent(BaseModel):
+    id: str
+    name: str
+    description: str = ""
+    voice_id: str = ""
+    language: str = "en"
+    personality_traits: List[str] = []
+    status: str = "inactive"
+    created_at: datetime
+    updated_at: datetime
+
+class Voice(BaseModel):
+    id: str
+    name: str
+    provider: str = "piper_tts"
+    
+class User(BaseModel):
+    id: str
+    email: str
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -40,8 +80,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize database client
-db = DatabaseClient()
+# Initialize database client with error handling
+try:
+    db = DatabaseClient()
+    logger.info("Database client initialized successfully")
+except ValueError as e:
+    logger.warning(f"Database client initialization failed: {e}")
+    logger.warning("Running in demo mode without database connectivity")
+    db = None
 
 # Dependency for authentication
 async def get_current_user(user_id: str = "authenticated_user"):
@@ -52,14 +98,18 @@ async def get_current_user(user_id: str = "authenticated_user"):
 async def startup_event():
     """Initialize service on startup"""
     logger.info("Agents Service starting up...")
-    await db.connect()
-    logger.info("Connected to database")
+    if db:
+        await db.connect()
+        logger.info("Connected to database")
+    else:
+        logger.info("Running in demo mode without database")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
     logger.info("Agents Service shutting down...")
-    await db.disconnect()
+    if db:
+        await db.disconnect()
 
 @app.get("/")
 async def root():
@@ -75,13 +125,18 @@ async def root():
 async def health_check():
     """Health check endpoint"""
     try:
-        # Check database connection
-        await db.health_check()
+        # Check database connection if available
+        if db:
+            await db.health_check()
+            database_status = "connected"
+        else:
+            database_status = "demo_mode"
+            
         return {
             "status": "healthy",
             "service": "agents",
             "timestamp": datetime.utcnow().isoformat(),
-            "database": "connected"
+            "database": database_status
         }
     except Exception as e:
         logger.error(f"Health check failed: {e}")

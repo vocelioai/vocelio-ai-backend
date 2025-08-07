@@ -269,6 +269,149 @@ SAMPLE_TEMPLATES = [
         popularity_score=8.2,
         setup_difficulty="easy",
         estimated_setup_time=5
+    ),
+    IntegrationTemplate(
+        name="Google Calendar",
+        description="Sync appointments and events with Google Calendar",
+        provider="google",
+        type=IntegrationType.CALENDAR,
+        template_config=Integration(
+            name="Google Calendar Integration",
+            description="Template for Google Calendar integration",
+            type=IntegrationType.CALENDAR,
+            provider="google",
+            status=IntegrationStatus.INACTIVE,
+            auth_config=AuthConfig(
+                auth_type=AuthType.OAUTH2,
+                oauth_config={
+                    "client_id": "your_google_client_id",
+                    "client_secret": "your_google_client_secret",
+                    "redirect_uri": "https://api.vocelio.com/integrations/oauth/google/callback",
+                    "scope": "https://www.googleapis.com/auth/calendar"
+                }
+            ),
+            sync_config=SyncConfig(
+                direction=SyncDirection.BIDIRECTIONAL,
+                frequency="real_time",
+                data_mappings=[
+                    DataMapping(source_field="title", target_field="summary", required=True),
+                    DataMapping(source_field="start_time", target_field="start.dateTime", required=True),
+                    DataMapping(source_field="end_time", target_field="end.dateTime", required=True),
+                    DataMapping(source_field="description", target_field="description"),
+                    DataMapping(source_field="location", target_field="location"),
+                    DataMapping(source_field="attendees", target_field="attendees")
+                ]
+            ),
+            api_endpoint="https://www.googleapis.com/calendar/v3/",
+            webhook_url="https://api.vocelio.com/integrations/webhooks/google-calendar",
+            created_by="system"
+        ),
+        setup_instructions=[
+            "Create project in Google Cloud Console",
+            "Enable Calendar API",
+            "Configure OAuth 2.0 credentials",
+            "Set up webhook notifications",
+            "Test calendar access"
+        ],
+        required_credentials=["client_id", "client_secret", "calendar_id"],
+        supported_features=["Event Creation", "Event Updates", "Real-time Sync", "Availability Check", "Meeting Scheduling"],
+        popularity_score=9.8,
+        setup_difficulty="medium",
+        estimated_setup_time=25
+    ),
+    IntegrationTemplate(
+        name="Microsoft Outlook Calendar",
+        description="Sync appointments and events with Microsoft Outlook/Office365",
+        provider="microsoft",
+        type=IntegrationType.CALENDAR,
+        template_config=Integration(
+            name="Microsoft Outlook Calendar Integration",
+            description="Template for Microsoft Outlook Calendar integration",
+            type=IntegrationType.CALENDAR,
+            provider="microsoft",
+            status=IntegrationStatus.INACTIVE,
+            auth_config=AuthConfig(
+                auth_type=AuthType.OAUTH2,
+                oauth_config={
+                    "client_id": "your_microsoft_client_id",
+                    "client_secret": "your_microsoft_client_secret",
+                    "redirect_uri": "https://api.vocelio.com/integrations/oauth/microsoft/callback",
+                    "scope": "https://graph.microsoft.com/calendars.readwrite"
+                }
+            ),
+            sync_config=SyncConfig(
+                direction=SyncDirection.BIDIRECTIONAL,
+                frequency="real_time",
+                data_mappings=[
+                    DataMapping(source_field="title", target_field="subject", required=True),
+                    DataMapping(source_field="start_time", target_field="start.dateTime", required=True),
+                    DataMapping(source_field="end_time", target_field="end.dateTime", required=True),
+                    DataMapping(source_field="description", target_field="body.content"),
+                    DataMapping(source_field="location", target_field="location.displayName"),
+                    DataMapping(source_field="attendees", target_field="attendees")
+                ]
+            ),
+            api_endpoint="https://graph.microsoft.com/v1.0/",
+            webhook_url="https://api.vocelio.com/integrations/webhooks/microsoft-calendar",
+            created_by="system"
+        ),
+        setup_instructions=[
+            "Register app in Azure Active Directory",
+            "Configure API permissions for Calendar",
+            "Set up OAuth 2.0 flow",
+            "Configure webhook subscriptions",
+            "Test calendar access"
+        ],
+        required_credentials=["client_id", "client_secret", "tenant_id"],
+        supported_features=["Event Creation", "Event Updates", "Real-time Sync", "Availability Check", "Meeting Scheduling", "Teams Integration"],
+        popularity_score=9.2,
+        setup_difficulty="medium",
+        estimated_setup_time=30
+    ),
+    IntegrationTemplate(
+        name="CalDAV Calendar",
+        description="Universal calendar integration using CalDAV protocol",
+        provider="caldav",
+        type=IntegrationType.CALENDAR,
+        template_config=Integration(
+            name="CalDAV Calendar Integration",
+            description="Template for CalDAV calendar integration",
+            type=IntegrationType.CALENDAR,
+            provider="caldav",
+            status=IntegrationStatus.INACTIVE,
+            auth_config=AuthConfig(
+                auth_type=AuthType.BASIC_AUTH,
+                credentials={
+                    "username": "your_caldav_username",
+                    "password": "your_caldav_password"
+                }
+            ),
+            sync_config=SyncConfig(
+                direction=SyncDirection.BIDIRECTIONAL,
+                frequency="hourly",
+                data_mappings=[
+                    DataMapping(source_field="title", target_field="SUMMARY", required=True),
+                    DataMapping(source_field="start_time", target_field="DTSTART", required=True),
+                    DataMapping(source_field="end_time", target_field="DTEND", required=True),
+                    DataMapping(source_field="description", target_field="DESCRIPTION"),
+                    DataMapping(source_field="location", target_field="LOCATION"),
+                    DataMapping(source_field="organizer", target_field="ORGANIZER")
+                ]
+            ),
+            api_endpoint="https://your-caldav-server.com/calendars/",
+            created_by="system"
+        ),
+        setup_instructions=[
+            "Configure CalDAV server access",
+            "Set up authentication credentials",
+            "Test calendar discovery",
+            "Configure sync preferences"
+        ],
+        required_credentials=["server_url", "username", "password"],
+        supported_features=["Event Creation", "Event Updates", "Universal Protocol", "Self-hosted Support"],
+        popularity_score=7.5,
+        setup_difficulty="easy",
+        estimated_setup_time=15
     )
 ]
 
@@ -356,6 +499,126 @@ SAMPLE_INTEGRATIONS = [
         success_count=156,
         error_count=2,
         tags=["analytics", "reporting", "google"]
+    ),
+    Integration(
+        name="Google Calendar - Main",
+        description="Primary Google Calendar integration for appointment scheduling",
+        type=IntegrationType.CALENDAR,
+        provider="google",
+        status=IntegrationStatus.ACTIVE,
+        auth_config=AuthConfig(
+            auth_type=AuthType.OAUTH2,
+            oauth_config={
+                "client_id": "123456789-demo.apps.googleusercontent.com",
+                "client_secret": "DEMO-google-client-secret",
+                "access_token": "ya29.demo-access-token",
+                "refresh_token": "1//demo-refresh-token"
+            }
+        ),
+        sync_config=SyncConfig(
+            direction=SyncDirection.BIDIRECTIONAL,
+            frequency="real_time",
+            last_sync=datetime.now() - timedelta(minutes=1),
+            data_mappings=[
+                DataMapping(source_field="title", target_field="summary", required=True),
+                DataMapping(source_field="start_time", target_field="start.dateTime", required=True),
+                DataMapping(source_field="end_time", target_field="end.dateTime", required=True),
+                DataMapping(source_field="description", target_field="description"),
+                DataMapping(source_field="location", target_field="location"),
+                DataMapping(source_field="attendees", target_field="attendees")
+            ]
+        ),
+        api_endpoint="https://www.googleapis.com/calendar/v3/",
+        webhook_url="https://api.vocelio.com/integrations/webhooks/google-calendar",
+        created_by="calendar@vocelio.com",
+        last_activity=datetime.now() - timedelta(minutes=1),
+        success_count=2847,
+        error_count=18,
+        metadata={
+            "calendar_id": "primary",
+            "time_zone": "America/New_York",
+            "webhook_channel_id": "calendar-channel-001"
+        },
+        tags=["calendar", "google", "scheduling", "primary"]
+    ),
+    Integration(
+        name="Outlook Calendar - Business",
+        description="Microsoft Outlook Calendar integration for business meetings",
+        type=IntegrationType.CALENDAR,
+        provider="microsoft",
+        status=IntegrationStatus.ACTIVE,
+        auth_config=AuthConfig(
+            auth_type=AuthType.OAUTH2,
+            oauth_config={
+                "client_id": "a1b2c3d4-demo-outlook-client",
+                "client_secret": "DEMO-outlook-secret",
+                "access_token": "EwB4A+demo-access-token",
+                "refresh_token": "M.R3demo-refresh-token"
+            }
+        ),
+        sync_config=SyncConfig(
+            direction=SyncDirection.BIDIRECTIONAL,
+            frequency="real_time",
+            last_sync=datetime.now() - timedelta(minutes=3),
+            data_mappings=[
+                DataMapping(source_field="title", target_field="subject", required=True),
+                DataMapping(source_field="start_time", target_field="start.dateTime", required=True),
+                DataMapping(source_field="end_time", target_field="end.dateTime", required=True),
+                DataMapping(source_field="description", target_field="body.content"),
+                DataMapping(source_field="location", target_field="location.displayName"),
+                DataMapping(source_field="attendees", target_field="attendees")
+            ]
+        ),
+        api_endpoint="https://graph.microsoft.com/v1.0/",
+        webhook_url="https://api.vocelio.com/integrations/webhooks/microsoft-calendar",
+        created_by="calendar@vocelio.com",
+        last_activity=datetime.now() - timedelta(minutes=3),
+        success_count=1923,
+        error_count=7,
+        metadata={
+            "calendar_id": "AQMkAGEwMDemo-calendar-id",
+            "time_zone": "Eastern Standard Time",
+            "subscription_id": "outlook-subscription-001"
+        },
+        tags=["calendar", "microsoft", "outlook", "business"]
+    ),
+    Integration(
+        name="Team Calendar - CalDAV",
+        description="Team shared calendar using CalDAV protocol",
+        type=IntegrationType.CALENDAR,
+        provider="caldav",
+        status=IntegrationStatus.ACTIVE,
+        auth_config=AuthConfig(
+            auth_type=AuthType.BASIC_AUTH,
+            credentials={
+                "username": "vocelio-team",
+                "password": "demo-caldav-password"
+            }
+        ),
+        sync_config=SyncConfig(
+            direction=SyncDirection.BIDIRECTIONAL,
+            frequency="hourly",
+            last_sync=datetime.now() - timedelta(minutes=45),
+            data_mappings=[
+                DataMapping(source_field="title", target_field="SUMMARY", required=True),
+                DataMapping(source_field="start_time", target_field="DTSTART", required=True),
+                DataMapping(source_field="end_time", target_field="DTEND", required=True),
+                DataMapping(source_field="description", target_field="DESCRIPTION"),
+                DataMapping(source_field="location", target_field="LOCATION"),
+                DataMapping(source_field="organizer", target_field="ORGANIZER")
+            ]
+        ),
+        api_endpoint="https://calendar.vocelio.com/caldav/",
+        created_by="admin@vocelio.com",
+        last_activity=datetime.now() - timedelta(minutes=45),
+        success_count=456,
+        error_count=3,
+        metadata={
+            "calendar_name": "Team Shared",
+            "server_type": "caldav",
+            "sync_interval": 3600
+        },
+        tags=["calendar", "caldav", "team", "shared"]
     )
 ]
 
@@ -486,6 +749,198 @@ async def health_check():
         "service": "integrations",
         "timestamp": datetime.now().isoformat(),
         "version": "1.0.0"
+    }
+
+# Calendar Integration Endpoints
+@app.get("/calendar/providers", response_model=List[Integration])
+async def get_calendar_providers():
+    """Get all configured calendar providers"""
+    calendar_integrations = [i for i in integrations if i.type == IntegrationType.CALENDAR]
+    return calendar_integrations
+
+@app.get("/calendar/availability/{integration_id}")
+async def check_calendar_availability(
+    integration_id: str,
+    start_time: datetime,
+    end_time: datetime,
+    time_zone: str = "UTC"
+):
+    """Check availability in a specific calendar"""
+    integration = next((i for i in integrations if i.id == integration_id and i.type == IntegrationType.CALENDAR), None)
+    if not integration:
+        raise HTTPException(status_code=404, detail="Calendar integration not found")
+    
+    if integration.status != IntegrationStatus.ACTIVE:
+        raise HTTPException(status_code=400, detail="Calendar integration is not active")
+    
+    # Mock availability check - in real implementation, this would call the calendar API
+    mock_events = [
+        {
+            "id": "event-001",
+            "title": "Team Meeting",
+            "start": start_time + timedelta(hours=2),
+            "end": start_time + timedelta(hours=3),
+            "busy": True
+        },
+        {
+            "id": "event-002", 
+            "title": "Client Call",
+            "start": start_time + timedelta(hours=5),
+            "end": start_time + timedelta(hours=6),
+            "busy": True
+        }
+    ]
+    
+    return {
+        "integration_id": integration_id,
+        "calendar_name": integration.name,
+        "time_zone": time_zone,
+        "query_start": start_time,
+        "query_end": end_time,
+        "available_slots": [
+            {"start": start_time, "end": start_time + timedelta(hours=2)},
+            {"start": start_time + timedelta(hours=3), "end": start_time + timedelta(hours=5)},
+            {"start": start_time + timedelta(hours=6), "end": end_time}
+        ],
+        "busy_events": mock_events,
+        "is_available": len(mock_events) < 3  # Mock logic
+    }
+
+@app.post("/calendar/events/{integration_id}")
+async def create_calendar_event(
+    integration_id: str,
+    event_data: Dict[str, Any]
+):
+    """Create a new event in the specified calendar"""
+    integration = next((i for i in integrations if i.id == integration_id and i.type == IntegrationType.CALENDAR), None)
+    if not integration:
+        raise HTTPException(status_code=404, detail="Calendar integration not found")
+    
+    if integration.status != IntegrationStatus.ACTIVE:
+        raise HTTPException(status_code=400, detail="Calendar integration is not active")
+    
+    # Mock event creation - in real implementation, this would call the calendar API
+    event_id = str(uuid.uuid4())
+    
+    # Log the API call
+    call = await make_api_call(
+        integration=integration,
+        method="POST",
+        endpoint=f"{integration.api_endpoint}calendars/primary/events",
+        payload=event_data
+    )
+    
+    created_event = {
+        "id": event_id,
+        "calendar_id": integration.metadata.get("calendar_id", "primary"),
+        "integration_name": integration.name,
+        "created_at": datetime.now().isoformat(),
+        **event_data
+    }
+    
+    logger.info(f"Created calendar event {event_id} in {integration.name}")
+    
+    return {
+        "success": True,
+        "event": created_event,
+        "api_call_id": call.id
+    }
+
+@app.put("/calendar/events/{integration_id}/{event_id}")
+async def update_calendar_event(
+    integration_id: str,
+    event_id: str,
+    event_data: Dict[str, Any]
+):
+    """Update an existing event in the specified calendar"""
+    integration = next((i for i in integrations if i.id == integration_id and i.type == IntegrationType.CALENDAR), None)
+    if not integration:
+        raise HTTPException(status_code=404, detail="Calendar integration not found")
+    
+    if integration.status != IntegrationStatus.ACTIVE:
+        raise HTTPException(status_code=400, detail="Calendar integration is not active")
+    
+    # Log the API call
+    call = await make_api_call(
+        integration=integration,
+        method="PUT",
+        endpoint=f"{integration.api_endpoint}calendars/primary/events/{event_id}",
+        payload=event_data
+    )
+    
+    updated_event = {
+        "id": event_id,
+        "calendar_id": integration.metadata.get("calendar_id", "primary"),
+        "integration_name": integration.name,
+        "updated_at": datetime.now().isoformat(),
+        **event_data
+    }
+    
+    logger.info(f"Updated calendar event {event_id} in {integration.name}")
+    
+    return {
+        "success": True,
+        "event": updated_event,
+        "api_call_id": call.id
+    }
+
+@app.delete("/calendar/events/{integration_id}/{event_id}")
+async def delete_calendar_event(
+    integration_id: str,
+    event_id: str
+):
+    """Delete an event from the specified calendar"""
+    integration = next((i for i in integrations if i.id == integration_id and i.type == IntegrationType.CALENDAR), None)
+    if not integration:
+        raise HTTPException(status_code=404, detail="Calendar integration not found")
+    
+    if integration.status != IntegrationStatus.ACTIVE:
+        raise HTTPException(status_code=400, detail="Calendar integration is not active")
+    
+    # Log the API call
+    call = await make_api_call(
+        integration=integration,
+        method="DELETE",
+        endpoint=f"{integration.api_endpoint}calendars/primary/events/{event_id}"
+    )
+    
+    logger.info(f"Deleted calendar event {event_id} from {integration.name}")
+    
+    return {
+        "success": True,
+        "event_id": event_id,
+        "calendar_name": integration.name,
+        "deleted_at": datetime.now().isoformat(),
+        "api_call_id": call.id
+    }
+
+@app.get("/calendar/sync-status")
+async def get_calendar_sync_status():
+    """Get sync status for all calendar integrations"""
+    calendar_integrations = [i for i in integrations if i.type == IntegrationType.CALENDAR]
+    
+    sync_status = []
+    for integration in calendar_integrations:
+        last_sync = integration.sync_config.last_sync
+        sync_health = "healthy" if last_sync and (datetime.now() - last_sync).total_seconds() < 3600 else "stale"
+        
+        sync_status.append({
+            "integration_id": integration.id,
+            "name": integration.name,
+            "provider": integration.provider,
+            "status": integration.status,
+            "last_sync": last_sync,
+            "sync_frequency": integration.sync_config.frequency,
+            "sync_health": sync_health,
+            "success_count": integration.success_count,
+            "error_count": integration.error_count
+        })
+    
+    return {
+        "total_calendars": len(calendar_integrations),
+        "active_calendars": len([i for i in calendar_integrations if i.status == IntegrationStatus.ACTIVE]),
+        "sync_status": sync_status,
+        "last_updated": datetime.now().isoformat()
     }
 
 # Integration Management Endpoints

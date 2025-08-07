@@ -17,6 +17,7 @@ import logging
 import re
 from decimal import Decimal
 import calendar
+import httpx
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -664,6 +665,149 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Calendar Integration Configuration
+INTEGRATIONS_SERVICE_URL = "http://integrations:8010"  # Internal Docker network URL
+INTEGRATIONS_SERVICE_URL_EXTERNAL = "http://localhost:8010"  # External URL for testing
+
+# Calendar Integration Functions
+async def get_calendar_providers():
+    """Get available calendar providers from integrations service"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{INTEGRATIONS_SERVICE_URL}/calendar/providers")
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.warning(f"Failed to get calendar providers: {response.status_code}")
+                return []
+    except Exception as e:
+        logger.error(f"Error connecting to integrations service: {str(e)}")
+        # Fallback to external URL
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f"{INTEGRATIONS_SERVICE_URL_EXTERNAL}/calendar/providers")
+                if response.status_code == 200:
+                    return response.json()
+                else:
+                    return []
+        except Exception as fallback_error:
+            logger.error(f"Fallback connection also failed: {str(fallback_error)}")
+            return []
+
+async def check_calendar_availability(integration_id: str, start_time: datetime, end_time: datetime):
+    """Check availability in a specific calendar"""
+    try:
+        params = {
+            "start_time": start_time.isoformat(),
+            "end_time": end_time.isoformat(),
+            "time_zone": "UTC"
+        }
+        
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{INTEGRATIONS_SERVICE_URL}/calendar/availability/{integration_id}",
+                params=params
+            )
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.warning(f"Failed to check calendar availability: {response.status_code}")
+                return None
+    except Exception as e:
+        logger.error(f"Error checking calendar availability: {str(e)}")
+        return None
+
+async def create_calendar_event(integration_id: str, event_data: Dict[str, Any]):
+    """Create an event in the specified calendar"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{INTEGRATIONS_SERVICE_URL}/calendar/events/{integration_id}",
+                json=event_data
+            )
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.warning(f"Failed to create calendar event: {response.status_code}")
+                return None
+    except Exception as e:
+        logger.error(f"Error creating calendar event: {str(e)}")
+        return None
+
+async def update_calendar_event(integration_id: str, event_id: str, event_data: Dict[str, Any]):
+    """Update an event in the specified calendar"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.put(
+                f"{INTEGRATIONS_SERVICE_URL}/calendar/events/{integration_id}/{event_id}",
+                json=event_data
+            )
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.warning(f"Failed to update calendar event: {response.status_code}")
+                return None
+    except Exception as e:
+        logger.error(f"Error updating calendar event: {str(e)}")
+        return None
+
+async def delete_calendar_event(integration_id: str, event_id: str):
+    """Delete an event from the specified calendar"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(
+                f"{INTEGRATIONS_SERVICE_URL}/calendar/events/{integration_id}/{event_id}"
+            )
+            if response.status_code == 200:
+                return response.json()
+            else:
+                logger.warning(f"Failed to delete calendar event: {response.status_code}")
+                return None
+    except Exception as e:
+        logger.error(f"Error deleting calendar event: {str(e)}")
+        return None
+
+async def sync_appointment_to_calendar(appointment: 'Appointment'):
+    """Sync an appointment to all configured calendar providers"""
+    calendar_providers = await get_calendar_providers()
+    results = []
+    
+    for provider in calendar_providers:
+        if provider.get('status') == 'active':
+            event_data = {
+                "title": f"{appointment.appointment_type.value.replace('_', ' ').title()} - {appointment.customer_name}",
+                "start_time": appointment.start_time.isoformat(),
+                "end_time": appointment.end_time.isoformat(),
+                "description": f"Appointment Details:\n"
+                             f"Type: {appointment.appointment_type.value}\n"
+                             f"Contact: {appointment.customer_name}\n"
+                             f"Phone: {appointment.customer_phone}\n"
+                             f"Email: {appointment.customer_email}\n"
+                             f"Notes: {appointment.description or 'No additional notes'}",
+                "location": appointment.location_details or "Virtual Meeting",
+                "attendees": [
+                    {"email": appointment.customer_email, "name": appointment.customer_name}
+                ] if appointment.customer_email else []
+            }
+            
+            result = await create_calendar_event(provider['id'], event_data)
+            if result:
+                results.append({
+                    "provider": provider['name'],
+                    "integration_id": provider['id'],
+                    "event_id": result.get('event', {}).get('id'),
+                    "success": True
+                })
+            else:
+                results.append({
+                    "provider": provider['name'],
+                    "integration_id": provider['id'],
+                    "success": False,
+                    "error": "Failed to create calendar event"
+                })
+    
+    return results
+
 # Health endpoint
 @app.get("/health")
 async def health_check():
@@ -672,6 +816,120 @@ async def health_check():
         "service": "scheduling",
         "timestamp": datetime.now().isoformat(),
         "version": "1.0.0"
+    }
+
+# Calendar Integration Endpoints
+@app.get("/calendar/providers")
+async def get_calendar_integration_providers():
+    """Get available calendar providers from integrations service"""
+    providers = await get_calendar_providers()
+    return {
+        "providers": providers,
+        "total_providers": len(providers),
+        "active_providers": len([p for p in providers if p.get('status') == 'active']),
+        "service_connection": "healthy" if providers else "unavailable"
+    }
+
+@app.get("/calendar/availability")
+async def check_appointment_availability(
+    start_time: datetime,
+    end_time: datetime,
+    integration_id: Optional[str] = None
+):
+    """Check availability across calendar providers for appointment scheduling"""
+    calendar_providers = await get_calendar_providers()
+    
+    if integration_id:
+        # Check specific calendar
+        provider = next((p for p in calendar_providers if p['id'] == integration_id), None)
+        if not provider:
+            raise HTTPException(status_code=404, detail="Calendar provider not found")
+        
+        availability = await check_calendar_availability(integration_id, start_time, end_time)
+        return {
+            "provider": provider['name'],
+            "availability": availability,
+            "time_slot": {"start": start_time, "end": end_time}
+        }
+    else:
+        # Check all active calendars
+        availability_results = []
+        for provider in calendar_providers:
+            if provider.get('status') == 'active':
+                availability = await check_calendar_availability(provider['id'], start_time, end_time)
+                availability_results.append({
+                    "provider": provider['name'],
+                    "integration_id": provider['id'],
+                    "availability": availability
+                })
+        
+        return {
+            "time_slot": {"start": start_time, "end": end_time},
+            "providers_checked": len(availability_results),
+            "availability_results": availability_results,
+            "overall_available": all(
+                result['availability'] and result['availability'].get('is_available', False)
+                for result in availability_results
+                if result['availability']
+            )
+        }
+
+@app.post("/calendar/sync/{appointment_id}")
+async def sync_appointment_to_calendars(appointment_id: str):
+    """Manually sync an appointment to all configured calendar providers"""
+    appointment = next((a for a in appointments if a.id == appointment_id), None)
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    sync_results = await sync_appointment_to_calendar(appointment)
+    
+    # Update appointment with calendar sync info
+    appointment.custom_fields["calendar_sync"] = {
+        "last_synced": datetime.now().isoformat(),
+        "sync_results": sync_results,
+        "synced_providers": [r['provider'] for r in sync_results if r['success']]
+    }
+    
+    return {
+        "appointment_id": appointment_id,
+        "sync_results": sync_results,
+        "successful_syncs": len([r for r in sync_results if r['success']]),
+        "failed_syncs": len([r for r in sync_results if not r['success']]),
+        "status": "success" if any(r['success'] for r in sync_results) else "failed"
+    }
+
+@app.get("/calendar/sync-status")
+async def get_calendar_sync_status():
+    """Get calendar sync status for all appointments"""
+    synced_appointments = []
+    unsynced_appointments = []
+    
+    for appointment in appointments:
+        calendar_sync = appointment.custom_fields.get("calendar_sync")
+        if calendar_sync:
+            synced_appointments.append({
+                "appointment_id": appointment.id,
+                "contact_name": appointment.customer_name,
+                "start_time": appointment.start_time,
+                "last_synced": calendar_sync.get("last_synced"),
+                "synced_providers": calendar_sync.get("synced_providers", [])
+            })
+        else:
+            unsynced_appointments.append({
+                "appointment_id": appointment.id,
+                "contact_name": appointment.customer_name,
+                "start_time": appointment.start_time,
+                "status": appointment.status
+            })
+    
+    return {
+        "total_appointments": len(appointments),
+        "synced_appointments": len(synced_appointments),
+        "unsynced_appointments": len(unsynced_appointments),
+        "sync_details": {
+            "synced": synced_appointments,
+            "unsynced": unsynced_appointments
+        }
     }
 
 # Appointment Management Endpoints
@@ -786,7 +1044,24 @@ async def create_appointment(appointment_data: Appointment):
         ]
     
     appointments.append(appointment_data)
-    logger.info(f"Created new appointment: {appointment_data.title} for {appointment_data.customer_name}")
+    logger.info(f"Created new appointment: {appointment_data.title} for {appointment_data.contact_name}")
+    
+    # Automatically sync to calendar providers
+    try:
+        sync_results = await sync_appointment_to_calendar(appointment_data)
+        appointment_data.custom_fields["calendar_sync"] = {
+            "last_synced": datetime.now().isoformat(),
+            "sync_results": sync_results,
+            "synced_providers": [r['provider'] for r in sync_results if r['success']]
+        }
+        logger.info(f"Synced appointment {appointment_data.id} to {len([r for r in sync_results if r['success']])} calendar providers")
+    except Exception as e:
+        logger.error(f"Failed to sync appointment to calendars: {str(e)}")
+        appointment_data.custom_fields["calendar_sync"] = {
+            "last_synced": datetime.now().isoformat(),
+            "sync_error": str(e)
+        }
+    
     return appointment_data
 
 @app.put("/appointments/{appointment_id}", response_model=Appointment)

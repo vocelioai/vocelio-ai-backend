@@ -3,6 +3,11 @@ Smart Campaigns Service - Vocelio Backend
 Handles campaign management, A/B testing, and campaign optimization
 """
 
+# Manual sys.path fix for Docker import issues
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -14,7 +19,6 @@ import asyncio
 import logging
 import json
 import uuid
-import os
 from contextlib import asynccontextmanager
 
 # Configure logging

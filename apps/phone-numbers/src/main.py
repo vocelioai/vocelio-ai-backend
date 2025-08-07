@@ -3,6 +3,10 @@ Phone Numbers Service - Vocelio Backend
 Twilio integration, phone number management, and telephony operations
 """
 
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+
 from fastapi import FastAPI, HTTPException, Depends, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -790,7 +794,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8005,
+        port=8019,
         reload=True,
         log_level="info"
     )

@@ -197,7 +197,7 @@ services:
       context: .
       dockerfile: apps/phone-numbers/Dockerfile
     ports:
-      - "8015:8015"
+      - "8019:8019"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SERVICE_NAME=phone-numbers

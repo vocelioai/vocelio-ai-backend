@@ -3,6 +3,10 @@ Lead Management Service - Vocelio AI Call Center
 Comprehensive lead tracking, scoring, nurturing, and pipeline management
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -1268,4 +1272,4 @@ async def get_lead_trends(days: int = 30):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8016)
+    uvicorn.run(app, host="0.0.0.0", port=8012)

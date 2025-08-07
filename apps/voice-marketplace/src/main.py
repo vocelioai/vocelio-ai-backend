@@ -3,6 +3,10 @@ Voice Marketplace Service - Vocelio AI Call Center
 Manages voice providers, pricing, quality metrics, and optimization recommendations
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -741,4 +745,4 @@ async def compare_providers(provider_ids: List[str]):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8006)
+    uvicorn.run(app, host="0.0.0.0", port=8020)

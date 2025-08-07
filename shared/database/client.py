@@ -299,5 +299,9 @@ class DatabaseClient:
             logger.error(f"Error updating record in {table}: {e}")
             return None
 
-# Global database client instance
-db_client = DatabaseClient()
+# Global database client instance - initialized conditionally
+try:
+    db_client = DatabaseClient()
+except ValueError:
+    # Running without Supabase configuration
+    db_client = None

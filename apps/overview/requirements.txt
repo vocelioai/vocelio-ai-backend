@@ -19,7 +19,7 @@ passlib[bcrypt]==1.7.4
 python-multipart==0.0.6
 
 # HTTP Client
-httpx==0.25.2
+httpx==0.24.1
 aiohttp==3.9.1
 
 # Caching
@@ -51,7 +51,7 @@ uuid==1.30
 pytest==7.4.3
 pytest-asyncio==0.21.1
 pytest-cov==4.1.0
-httpx==0.25.2
+httpx==0.24.1
 pytest-mock==3.12.0
 
 # Development
@@ -111,7 +111,7 @@ python-socketio==5.10.0
 pillow==10.1.0
 
 # Encryption
-cryptography==41.0.8
+cryptography==45.0.6
 
 # Environment
 python-decouple==3.8

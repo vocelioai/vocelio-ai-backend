@@ -8,7 +8,7 @@ python-multipart==0.0.6
 # Database
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
-supabase==2.0.2
+supabase==2.0.0
 postgrest==0.13.0
 
 # Authentication & Security
@@ -21,7 +21,7 @@ pydantic==2.5.0
 pydantic-settings==2.1.0
 
 # HTTP & API Client
-httpx==0.25.2
+httpx==0.24.1
 requests==2.31.0
 
 # AI & ML Services
@@ -35,8 +35,8 @@ elevenlabs==0.2.26
 twilio==8.10.3
 
 # Async & Task Processing
-asyncio-compat==0.1.2
 celery==5.3.4
+aiofiles==23.2.0
 
 # Data Processing
 pandas==2.1.4

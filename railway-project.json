@@ -1,0 +1,79 @@
+{
+  "name": "vocelio-ai-call-center",
+  "description": "Complete AI-powered call center platform with 25 microservices",
+  "services": {
+    "api-gateway": {
+      "source": {
+        "repo": "vocelioai/vocelio-ai-backend",
+        "branch": "main"
+      },
+      "build": {
+        "builder": "dockerfile",
+        "dockerfilePath": "dockerfiles/Dockerfile.api-gateway"
+      },
+      "deploy": {
+        "healthcheckPath": "/health",
+        "healthcheckTimeout": 300,
+        "restartPolicyType": "always"
+      },
+      "variables": {
+        "PORT": "8000",
+        "SERVICE_NAME": "api-gateway"
+      }
+    },
+    "agents": {
+      "source": {
+        "repo": "vocelioai/vocelio-ai-backend", 
+        "branch": "main"
+      },
+      "build": {
+        "builder": "dockerfile",
+        "dockerfilePath": "dockerfiles/Dockerfile.agents"
+      },
+      "deploy": {
+        "healthcheckPath": "/health",
+        "healthcheckTimeout": 300,
+        "restartPolicyType": "always"
+      },
+      "variables": {
+        "PORT": "8001",
+        "SERVICE_NAME": "agents"
+      }
+    },
+    "ai-brain": {
+      "source": {
+        "repo": "vocelioai/vocelio-ai-backend",
+        "branch": "main"
+      },
+      "build": {
+        "builder": "dockerfile", 
+        "dockerfilePath": "dockerfiles/Dockerfile.ai-brain"
+      },
+      "deploy": {
+        "healthcheckPath": "/health",
+        "healthcheckTimeout": 300,
+        "restartPolicyType": "always"
+      },
+      "variables": {
+        "PORT": "8002",
+        "SERVICE_NAME": "ai-brain"
+      }
+    }
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "ENVIRONMENT": "production",
+        "DEBUG": "false",
+        "LOG_LEVEL": "info"
+      }
+    },
+    "staging": {
+      "variables": {
+        "ENVIRONMENT": "staging", 
+        "DEBUG": "true",
+        "LOG_LEVEL": "debug"
+      }
+    }
+  }
+}

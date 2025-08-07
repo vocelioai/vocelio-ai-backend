@@ -473,10 +473,12 @@ async def get_ai_recommendations(
 # Development mode runner
 if __name__ == "__main__":
     import uvicorn
+    # Use Railway's PORT environment variable
+    port = int(os.environ.get("PORT", 8001))
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=8001,
+        port=port,
         reload=True,
         log_level="info"
     )
